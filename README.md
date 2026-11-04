@@ -144,28 +144,10 @@ The repository includes `requirements.txt` and `.streamlit/config.toml`, which C
 Update this section before submission so it accurately reflects your work. Example:
 
 - **ChatGPT:** helped interpret the assignment, plan the feature set and architecture, scaffold the initial application, and explain/debug implementation decisions.
-- **Google Gemini API (`gemini-2.5-flash`):** performs live lead analysis, structured scoring, call preparation and lead-contextual follow-up responses at runtime.
+- **Grok:** performs live lead analysis, structured scoring, call preparation and lead-contextual follow-up responses at runtime.
 - **VS Code:** used to run, inspect and test the project.
 - **GitHub / Streamlit Community Cloud:** used for source hosting and deployment.
 
 Only list tools you actually used. Be prepared to explain the prompts, data flow, JSON schema, storage trade-offs, API-key handling and limitations.
 
-## Suggested 3-minute demo flow
 
-1. **0:00–0:25 — Overview:** introduce the lead queue and Hot/Warm/Cold prioritization.
-2. **0:25–1:05 — Intake:** add a realistic customer enquiry and show the live Gemini analysis.
-3. **1:05–1:40 — Decision support:** walk through summary, intent, concerns, next action and suggested reply.
-4. **1:40–2:20 — Added feature:** show the Smart Call Companion and explain how its talking points map to the customer's actual message.
-5. **2:20–2:45 — Contextual AI chat:** ask “What should I emphasize on the call?” and show a lead-grounded answer.
-6. **2:45–3:00 — Technical decision:** explain why you used structured JSON output and kept storage in a small JSON file for this prototype.
-
-## Before submission checklist
-
-- [ ] Run locally and test with a real Gemini API key.
-- [ ] Test at least three different leads and confirm scores differ based on evidence.
-- [ ] Test a follow-up question and verify it refers to the selected customer.
-- [ ] Push the code to a public GitHub repository.
-- [ ] Add `GEMINI_API_KEY` in Streamlit Cloud secrets, not GitHub.
-- [ ] Test the deployed URL in a private/incognito browser window.
-- [ ] Record the demo video and check its sharing permissions.
-- [ ] Update the AI usage disclosure to match the tools actually used.
