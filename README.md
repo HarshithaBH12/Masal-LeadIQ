@@ -1,153 +1,237 @@
 # Masal LeadIQ
 
-**AI-powered real-estate lead intelligence for sales teams.**
+**AI-powered real-estate lead intelligence and sales prioritization platform.**
 
-Masal LeadIQ helps a salesperson move from a raw enquiry to a practical next step. It captures inbound leads, asks Gemini to assess buying readiness, ranks leads as Hot/Warm/Cold, and prepares a customer-specific call plan.
+Masal LeadIQ helps real-estate sales teams turn customer enquiries into actionable sales opportunities. It captures incoming leads, uses AI to evaluate buying readiness, categorizes leads as Hot, Warm or Cold, and generates personalized recommendations to help salespeople decide what to do next.
 
-## What it does
+## What It Does
 
-### Required assignment features
-- **Lead intake:** customer name, location, property requirement, budget, buying timeline and free-text customer message.
-- **AI analysis:** concise lead summary, customer intent, key requirements, objections/concerns, recommended next action and suggested customer response.
-- **Lead-specific conversation:** ask follow-up questions about one saved lead. The assistant receives that lead's saved details and analysis as context.
-- **Multiple leads and prioritization:** save multiple leads, view them in a priority queue, and sort by AI priority and score.
-- **Scan-friendly UI:** score, priority, summary and next action are surfaced in the workspace.
+### Core Features
 
-### Added feature: Smart Call Companion
-Each AI assessment includes a call preparation brief:
-- A suggested opening angle.
+- **Lead Intake:** Captures customer name, preferred location, property requirement, budget, buying timeline and customer message.
+- **AI-Powered Lead Analysis:** Generates a concise lead summary, customer intent, key requirements, objections, recommended next action and suggested customer response.
+- **Intelligent Lead Prioritization:** Assigns a score out of 100 and categorizes leads as Hot, Warm or Cold based on buying readiness.
+- **Lead-Specific AI Conversation:** Allows salespeople to ask follow-up questions using the selected lead's details and AI assessment as context.
+- **Multiple Lead Management:** Saves and organizes multiple enquiries in a priority-based dashboard.
+- **Scan-Friendly Dashboard:** Displays lead scores, priority levels, summaries and recommended actions for quick decision-making.
+
+### Additional Feature: Smart Call Companion
+
+Masal LeadIQ includes a Smart Call Companion that helps salespeople prepare before contacting a customer.
+
+It generates:
+- A personalized opening angle for the conversation.
 - Three customer-specific talking points.
-- Responses to likely objections.
+- Suggested responses to potential objections.
 - A realistic desired call outcome.
-- A suggested follow-up timeframe.
+- A recommended follow-up action.
 
-This feature is intended to help the salesperson prepare for the conversation, not replace their judgement or make commitments on behalf of the business.
+The feature supports salespeople in preparing for customer conversations without making commitments on behalf of the business.
 
-## Architecture overview
+## Technology Stack
+
+| Component | Technology |
+|---|---|
+| Frontend and UI | Streamlit |
+| Programming Language | Python |
+| AI Provider | Groq API |
+| AI Model | openai/gpt-oss-20b |
+| API Communication | Python Requests |
+| Data Storage | JSON |
+| Development Environment | Visual Studio Code |
+| Version Control | Git and GitHub |
+| Deployment | Streamlit Community Cloud |
+
+## Architecture Overview
 
 ```text
-Streamlit UI (app.py)
-   |
-   +-- Lead intake / lead workspace / chat
-   |
-   +-- lead_manager.py ---- JSON file storage (data/leads.json)
-   |
-   +-- ai_engine.py ------- Google Gen AI SDK
-                              |
-                              +-- Gemini analysis (structured JSON)
-                              +-- Lead-contextual follow-up chat
+                 Masal LeadIQ
+                      |
+                Streamlit UI
+                   app.py
+                      |
+          +-----------+-----------+
+          |                       |
+      Lead Manager             AI Engine
+    lead_manager.py           ai_engine.py
+          |                       |
+     JSON Storage              Groq API
+    data/leads.json                |
+                            GPT-OSS-20B
+                                  |
+                    +-------------+-------------+
+                    |             |             |
+               Lead Analysis   AI Chat     Call Companion
+                    |             |             |
+                    +-------------+-------------+
+                                  |
+                          AI Recommendations
 ```
 
-### AI model and how it is called
+### AI Integration
 
-- **Provider:** Google Gemini API
-- **HTTP client:** `requests` sends HTTPS requests directly to the Gemini REST API.
-- **Model configured:** `gemini-2.5-flash`
-- **Analysis call:** an HTTPS `POST` to Gemini's `generateContent` endpoint with JSON response mode and a response schema. The schema makes the lead assessment predictable for the UI.
-- **Conversation call:** another `generateContent` request with the selected lead's original details, AI assessment and recent chat history in the prompt.
+- **Provider:** Groq API.
+- **Model:** `openai/gpt-oss-20b`.
+- **API Endpoint:** Groq's OpenAI-compatible Chat Completions endpoint.
+- **HTTP Client:** Python Requests.
+- **Authentication:** API key stored securely using Streamlit secrets.
 
-The AI is a real runtime dependency. The app does not fabricate analysis if the API is unavailable; it shows an actionable error and keeps the lead saved so the salesperson can retry.
+The application sends customer enquiry details to the Groq API and receives AI-generated assessments.
 
-## Run locally
+The lead analysis uses JSON response mode to maintain a consistent structure for displaying scores, priorities, recommendations and call preparation details.
 
-### 1. Requirements
-- Python 3.10 or later (Python 3.11/3.12 recommended)
-- A Grok API key
+The conversational assistant receives the selected lead's information, previous AI assessment and recent conversation history to generate relevant follow-up responses.
 
-### 2. Open the folder in VS Code
+The application does not generate fabricated AI analysis when the API is unavailable. It displays an error while retaining the saved lead for another attempt.
 
-Open a terminal in the project folder.
+## Project Structure
 
-### 3. Create and activate a virtual environment
+```text
+Masal-LeadIQ/
+│
+├── app.py
+├── ai_engine.py
+├── lead_manager.py
+├── prompts.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+│
+├── .streamlit/
+│   ├── config.toml
+│   └── secrets.toml.example
+│
+├── data/
+│   └── .gitkeep
+│
+└── tests/
+    └── test_lead_manager.py
+```
+
+## Run Locally
+
+### Prerequisites
+
+- Python 3.10 or later.
+- Git.
+- A Groq API key.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/Masal-LeadIQ.git
+cd Masal-LeadIQ
+```
+
+### 2. Create a Virtual Environment
 
 macOS / Linux:
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-Windows PowerShell:
+Windows:
+
 ```powershell
 py -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
-### 4. Install dependencies
+### 3. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Add your API key
+### 4. Configure the API Key
 
-Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` and replace the placeholder:
+Create a file named `.streamlit/secrets.toml` and add:
 
 ```toml
-GEMINI_API_KEY = "your-real-key"
+GROQ_API_KEY = "your_actual_groq_api_key"
 ```
 
-You can create a Gemini API key in Google AI Studio: https://aistudio.google.com/apikey
+Generate an API key through the [Groq Console](https://console.groq.com/keys).
 
-Never commit `secrets.toml` or expose your API key in screenshots, source code or a public repository. The file is ignored by Git.
+Never commit your actual API key to GitHub or share it publicly.
 
-Alternatively, set the `GEMINI_API_KEY` environment variable.
+### 5. Run the Application
 
-### 6. Start the app
 ```bash
 streamlit run app.py
 ```
 
-The app will open in your browser, usually at `http://localhost:8501`.
+The application will normally open at:
 
-## Try the workflow
+```text
+http://localhost:8501
+```
 
-1. Open **Add a lead** and enter all required fields.
-2. Submit the form. The app saves the lead and calls Gemini for analysis.
-3. Open **Lead workspace** to review the score, priority, summary and recommended next action.
-4. Open **Smart Call Companion** to prepare for the call.
-5. Use **Ask about this lead** to ask a contextual follow-up question.
-6. Add more leads. The overview sorts analyzed Hot leads before Warm and Cold leads.
-7. On the dashboard, **Load sample enquiries** adds synthetic leads that you can analyze individually. Sample analysis is not prewritten; Gemini generates it live.
+## How to Use Masal LeadIQ
 
-## Deploy on Streamlit Community Cloud
+1. Open the dashboard and add a new customer enquiry.
+2. Enter the customer's details and requirements.
+3. Submit the enquiry to save the lead and trigger live AI analysis.
+4. Review the lead summary, buying intent, score and priority.
+5. Open Smart Call Companion to prepare for the customer conversation.
+6. Use Ask About This Lead to ask contextual follow-up questions.
+7. Add more leads and compare their priorities in the dashboard.
 
-1. Create a **public** GitHub repository and push this project.
-2. Visit https://share.streamlit.io/ and choose **Create app**.
-3. Select your repository, branch (`main`) and entrypoint file (`app.py`).
-4. Open **Advanced settings → Secrets** and add:
-   ```toml
-   GEMINI_API_KEY = "your-real-key"
-   ```
-5. Deploy. Share the resulting `https://....streamlit.app` URL.
+The application also provides sample enquiries for testing the workflow.
 
-The repository includes `requirements.txt` and `.streamlit/config.toml`, which Community Cloud uses for dependencies and app configuration.
+## Deployment
 
-## Key technical decisions
+Masal LeadIQ can be deployed using Streamlit Community Cloud.
 
-- **Streamlit:** fast to build, simple to demo and suitable for a compact internal sales tool.
-- **Gemini structured output:** reduces fragile free-form parsing for the core analysis.
-- **Separate AI and storage modules:** keeps model calls, data persistence and UI concerns easier to explain and maintain.
-- **JSON storage:** avoids database setup and meets the assignment's in-memory-or-database allowance. It is suitable for a small prototype, not concurrent production use.
-- **Lead score + label:** provides a quick queue signal while the rationale and confidence remain visible for human review.
-- **Contextual chat:** includes the selected lead's facts and AI analysis in each follow-up request rather than using a generic assistant prompt.
+1. Push the project to a public GitHub repository.
+2. Open [Streamlit Community Cloud](https://share.streamlit.io/).
+3. Sign in using GitHub.
+4. Select **Create app**.
+5. Choose the Masal-LeadIQ repository.
+6. Select the `main` branch.
+7. Set the main file path to `app.py`.
+8. Open Advanced Settings and add the following secret:
 
-## Known limitations
+```toml
+GROQ_API_KEY = "your_actual_groq_api_key"
+```
 
-- The JSON file is local prototype storage. Streamlit Community Cloud's local filesystem should not be treated as durable production storage; data can be lost when the app restarts or is redeployed. For production, replace this with a managed database such as Supabase/Postgres or Firestore.
-- This prototype has no authentication, role-based permissions, audit log or multi-user isolation. Do not enter real customer personal data until appropriate access controls and privacy safeguards are added.
-- The app uses one configured Gemini model. Model availability, quotas, pricing and free-tier limits depend on Google's current terms and region.
-- AI-generated scores and call suggestions can be wrong. Salespeople must verify customer details, property availability, pricing, legal information and all commitments.
-- The score is a prioritization aid, not a prediction of sale or a judgement about a person.
-- Chat history is held in the Streamlit session and is not persisted across sessions.
+9. Click Deploy.
 
-## AI usage disclosure
+Once deployment is complete, Streamlit provides a public application URL that can be shared.
 
-Update this section before submission so it accurately reflects your work. Example:
+## Key Technical Decisions
 
-- **ChatGPT:** helped interpret the assignment, plan the feature set and architecture, scaffold the initial application, and explain/debug implementation decisions.
-- **Grok:** performs live lead analysis, structured scoring, call preparation and lead-contextual follow-up responses at runtime.
-- **VS Code:** used to run, inspect and test the project.
-- **GitHub / Streamlit Community Cloud:** used for source hosting and deployment.
+- **Streamlit:** Used to build an interactive dashboard quickly without requiring a separate frontend framework.
+- **Groq API:** Provides access to an AI model for real-time lead analysis and conversational assistance.
+- **GPT-OSS-20B:** Used to generate structured lead assessments and contextual sales recommendations.
+- **JSON Response Mode:** Helps maintain consistent AI output for the application's analysis workflow.
+- **Modular Architecture:** Separates user interface, AI processing, prompts and lead management.
+- **JSON Storage:** Keeps the prototype simple without requiring a separate database setup.
+- **Lead Scoring:** Helps sales teams prioritize enquiries based on buying readiness rather than relying only on enquiry order.
 
-Only list tools you actually used. Be prepared to explain the prompts, data flow, JSON schema, storage trade-offs, API-key handling and limitations.
+## Limitations and Future Improvements
 
+- **Storage:** JSON-based storage is suitable for a prototype. A managed database such as PostgreSQL or Supabase would be more suitable for production.
+- **Authentication:** User authentication, role-based access and multi-user permissions can be added in future versions.
+- **AI Reliability:** AI-generated scores and recommendations may require human verification.
+- **Data Persistence:** The application's local JSON storage should not be treated as durable storage on cloud hosting. A persistent database is recommended for production.
+- **Chat History:** Conversations are maintained within the Streamlit session and are not permanently stored.
+- **Scalability:** Further improvements could include automated lead assignment, CRM integration, analytics and sales performance tracking.
 
+## AI Usage Disclosure
+
+- **ChatGPT:** Assisted with project planning, architecture, initial code scaffolding, debugging and implementation guidance.
+- **Groq API:** Used at runtime for AI-powered lead analysis, lead scoring, Smart Call Companion and contextual follow-up conversations.
+- **GPT-OSS-20B:** The model used for generating AI responses through the Groq API.
+- **Visual Studio Code:** Used for development, code editing and testing.
+- **GitHub:** Used for source-code management and version control.
+- **Streamlit Community Cloud:** Used for application deployment.
+
+The AI-generated results are intended to assist sales teams and should be reviewed by a human before taking business decisions.
+
+---
+
+**Masal LeadIQ — From customer enquiry to the next best action.**
