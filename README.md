@@ -52,7 +52,7 @@ The AI is a real runtime dependency. The app does not fabricate analysis if the 
 
 ### 1. Requirements
 - Python 3.10 or later (Python 3.11/3.12 recommended)
-- A Google Gemini API key
+- A Grok API key
 
 ### 2. Open the folder in VS Code
 
